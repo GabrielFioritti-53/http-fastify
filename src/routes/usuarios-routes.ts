@@ -12,6 +12,26 @@ const usuarios: Usuario[] = [
   { id_usuario: 3, nombre: "Juan", isAdmin: false },
 ];
 
+let id_actual = usuarios.length +1;
+
+const usuarioSchema={
+  type : "object",
+  properties:{
+    id_usuario:{type: "number",min:0},
+    nombre:{type:"string", minLength : 2},
+  },
+  required:["id_usuario","nombre"],
+  additionalProperties:true
+}
+const usuarioPostSchema = {
+  type: "object",
+  properties:{
+    nombre:{type:"string", minLength : 2},
+    isAdmin: {type:"boolean"}
+  },
+  required:["nombre","isAdmin"],
+  additionalProperties:false
+}
 async function usuariosRoutes(fastify: FastifyInstance, options: object) {
   fastify.get(
     "/usuarios",
@@ -27,6 +47,12 @@ async function usuariosRoutes(fastify: FastifyInstance, options: object) {
           },
           required: [],
         },
+        response:{
+          200:{
+            type:"array",
+            items : usuarioSchema
+          }
+        }
       },
     },
     async function handler(request, reply) {
@@ -35,6 +61,30 @@ async function usuariosRoutes(fastify: FastifyInstance, options: object) {
       return usuarios;
     }
   );
-}
 
-export default usuariosRoutes;
+  fastify.post('/usuarios',{
+      schema:{
+        summary:"Crear usuario",
+        descrption : "Estas ruta permite crear un nuevo usuario. ",
+        tags:["usuarios"],
+        body:usuarioPostSchema,
+        response:{
+          201:usuarioSchema
+        }
+      },
+    },async function handler(request,reply){
+      const{nombre, isAdmin}=request.body as Usuario;
+      const usuario = {nombre,isAdmin,id_usuario: id_actual++ } //Con una constante como id, unicamente subiendo, nos aseguramos que cada user tenga un id unico
+      usuarios.push(usuario);
+      reply.code(201);
+      return usuario;
+  })
+}
+//nose si esta bien ahi o va arriba con const usuarios
+//y el problema de la declaracion de ultimoID ni idea
+
+
+//async function usuariosPost(fastify: FastifyInstance, options: object) {
+  
+export default usuariosRoutes; 
+
