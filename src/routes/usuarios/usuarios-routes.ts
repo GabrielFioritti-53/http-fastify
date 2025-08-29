@@ -1,12 +1,13 @@
+import { FastifyPluginAsyncTypebox, Type } from "@fastify/type-provider-typebox";
 import type { FastifyInstance, FastifySchema } from "fastify";
 
-type Usuario = {
+type UsuarioType = {
   id_usuario: number;
   nombre: string;
   isAdmin: boolean;
 };
 
-const usuarios: Usuario[] = [
+const usuarios: UsuarioType[] = [
   { id_usuario: 1, nombre: "Jorge", isAdmin: true },
   { id_usuario: 2, nombre: "Alberto", isAdmin: false },
   { id_usuario: 3, nombre: "Juan", isAdmin: false },
@@ -14,7 +15,14 @@ const usuarios: Usuario[] = [
 
 let id_actual = usuarios.length + 1;
 
-const usuarioSchema = {
+const usuarioSchema=Type.Object({
+  id_usuario:Type.Integer(),
+  nombre:Type.String({minLength:2}),
+  isAdmin:Type.Boolean()
+},{
+
+});
+/*const usuarioSchema = {
   type: "object",
   properties: {
     id_usuario: { type: "number", min: 0 },
@@ -23,6 +31,7 @@ const usuarioSchema = {
   required: ["id_usuario", "nombre"],
   additionalProperties: true,
 };
+*/
 const usuarioPostSchema = {
   type: "object",
   properties: {
@@ -57,26 +66,15 @@ const usuarioGetSchema = {
   required: ["id_usuario"],
   additionalProperties: false,
 };
-async function usuariosRoutes(fastify: FastifyInstance, options: object) {
-  fastify.get(
-    "/usuarios",
-    {
+const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {
+  fastify.get('/usuarios/:id_usuario',{
       schema: {
         summary: "Obtener todos los usuarios",
         description: "Retorna la lista de usuarios",
         tags: ["listaUsuarios"],
-        querystring: {
-          type: "object",
-          properties: {
-            nombre: { type: "string", minLength: 2 },
-          },
-          required: [],
-        },
+        params:Type.Pick(usuarioSchema,["id_usuario"]),
         response: {
-          200: {
-            type: "array",
-            items: usuarioSchema,
-          },
+          200:usuarioSchema
         },
       },
     },

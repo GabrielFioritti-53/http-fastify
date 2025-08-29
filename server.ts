@@ -2,7 +2,7 @@ import Fastify from "fastify";
 import rootRoutes from "./src/routes/root-modules.ts";
 import exampleRoutes from "./src/routes/example-routes.ts";
 import swagger from "./src/plugins/swagger.ts";
-import usuariosRoutes from "./src/routes/usuarios-routes.ts";
+import usuariosRoutes from "./src/routes/usuarios/usuarios-routes.ts";
 const fastify = Fastify({
   logger: true,
 });
