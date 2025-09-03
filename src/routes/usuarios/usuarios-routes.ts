@@ -4,7 +4,7 @@ import {
   Type,
 } from "@fastify/type-provider-typebox";
 import type { FastifyInstance, FastifySchema } from "fastify";
-import errorSchema from "../../model/sharedmodel";
+import errorSchema from "../../model/sharedmodel.ts";
 import { Usuario } from "../../model/usuariosmodel";
 
 
