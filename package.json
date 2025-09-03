@@ -9,5 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@fastify/type-provider-typebox": "^5.2.0",
+    "fastify": "^5.5.0"
+  }
 }
