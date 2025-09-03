@@ -18,7 +18,18 @@ export default rootRoutes;
 */
 
 import Fastify from "fastify";
-import pino from 'pino';
+import pino, { transport } from 'pino';
+
+const loggerOptions = {
+  level: process.env.FASTIFY_LOG_LEVEL || 'trace',
+  transport: {
+    target: 'pino-pretty',
+    options: {
+      translateTime: 'HH:MM:ss',
+      ignore: 'pid,hostname',
+    }
+  }
+}
 
 const fastify = Fastify({
   logger: {
@@ -32,6 +43,7 @@ const fastify = Fastify({
     }
   }
 });
+
 // Ejemplo de endpoint
 fastify.get("/", async () => {
   fastify.log.info("Este es un log bonito");
