@@ -1,5 +1,5 @@
 import { Type } from "@fastify/type-provider-typebox";
-import { Static } from "@fastify/type-provider-typebox";
+import type { Static } from "@fastify/type-provider-typebox";
 export const Usuario = Type.Object(
     {
     id_usuario: Type.Integer(),

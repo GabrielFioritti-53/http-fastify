@@ -1,37 +1,46 @@
-import {
+import type {
     FastifyPluginAsyncTypebox,
-    Static,
-    Type,
 } from "@fastify/type-provider-typebox";
+import {Type} from "@fastify/type-provider-typebox";
 import type { FastifyInstance, FastifySchema } from "fastify";
-import errorSchema from "../model/sharedmodel";
-import { Usuario } from "../model/usuariosmodel";
-import { usuarios } from "../routes/usuarios/usuarios-routes";
-import { usuarioDeleteSchema } from "../routes/usuarios/usuarios-routes";
-import { usuarioGetSchema } from "../routes/usuarios/usuarios-routes";
-import { usuarioPostSchema } from "../routes/usuarios/usuarios-routes";
-import { usuarioPutSchema } from "../routes/usuarios/usuarios-routes";
+import errorSchema from "../model/sharedmodel.ts";
+import { Usuario } from "../model/usuariosmodel.ts";
+import { usuarios } from "../routes/usuarios/usuarios-routes.ts";
+
+import {
+    usuarioDeleteSchema,
+    usuarioGetSchema,
+    usuarioPostSchema,
+    usuarioPutSchema,
+} from "../routes/usuarios/usuarios-routes.ts";
 
 let id_actual = usuarios.length + 1;
 
-const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {
+const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify, options: object) {
 fastify.get(
-    "/usuarios",
+    "/usuarios", //en vez de params ahora usa querystring *1
     {
         schema: {
-        summary: "Obtener todos los usuarios",
-        description: "Retorna la lista de usuarios",
-        tags: ["listaUsuarios"],
-        params: Type.Pick(Usuario, ["id_usuario"]),
-        response: {
-            200: Usuario,
-            404: errorSchema,
-        },
+            summary: "Obtener todos los usuarios",
+            description: "Retorna la lista de usuarios",
+            tags: ["listaUsuarios"],
+            //params: Type.Pick(Usuario, ["id_usuario"]),
+            querystring: Type.Object({
+                nombre: Type.Optional(Type.String({minLength:2}))
+            }),
+            response: {
+                //200: Usuario,
+                200: Type.Array(Usuario), 
+                404: errorSchema,
+            },
         },
     },
-    async function handler(request, reply) {
+    //sacamos el handler y async no da error por el 200:Type.Array(Usuario)
+    async function (request, reply) {
         const query = request.query as { nombre: string };
-        if (query.nombre) return usuarios.filter((u) => u.nombre == query.nombre);
+        if (query.nombre) {
+            return usuarios.filter((u) => u.nombre == query.nombre);
+        }
         return usuarios;
     }
     );
@@ -43,30 +52,36 @@ fastify.get(
         summary: "Crear usuario",
         descrption: "Estas ruta permite crear un nuevo usuario. ",
         tags: ["usuarios"],
-        querystring: Type.Object({
-            nobre: Type.Optional(Type.String({ minLength: 2 })),
-        }),
-        response: { 201: Type.Array(Usuario) },
+        //        querystring: Type.Object({
+        //    nobre: Type.Optional(Type.String({ minLength: 2 })),
+        //}),
+        body: usuarioPostSchema, //Teniamos cambiado la sintaxis con la del get
+        response: { 
+            201:Usuario,
+            400: errorSchema
+        },
         },
     },
     
-    async function handler(request, reply) {
+    async function (request, reply) {
         const { nombre, isAdmin } = request.body as Usuario;
-      const usuario = { nombre, isAdmin, id_usuario: id_actual++ }; //Con una constante como id, unicamente subiendo, nos aseguramos que cada user tenga un id unico
+        const usuario = { nombre, isAdmin, id_usuario: id_actual++ }; //Con una constante como id, unicamente subiendo, nos aseguramos que cada user tenga un id unico
         usuarios.push(usuario);
         reply.code(201);
         return usuario;
     }
     );
-
     fastify.put(
-    "/usuarios/:id_usuario",
+    "/usuarios/:id_usuario",//tenia body y le cambie a params *2
     {
         schema: {
         summary: "Modificar un usuario",
         description: "Esta ruta permite modificar un usuario",
         tags: ["usuarios"],
-        body: usuarioPutSchema,
+        // body: usuarioPutSchema,
+        params: Type.Object({
+            id_usuario:Type.Number()
+        }),
         response: {
             204: Usuario,
             404: {
@@ -78,12 +93,12 @@ fastify.get(
         },  
         },
     },
-    async function handler(request, reply) {
+    async function (request, reply) {
         const { id_usuario, nombre } = request.body as {
         id_usuario: number;
         nombre: string;
         };
-      const usuarioId = usuarios.findIndex((u) => u.id_usuario === id_usuario); //Es importante buscar los user por su id pues es el unico elto que es unico por user.
+        const usuarioId = usuarios.findIndex((u) => u.id_usuario === id_usuario); //Es importante buscar los user por su id pues es el unico elto que es unico por user.
         if (usuarioId === -1) {
         reply.code(404);
         return { error: "Usuario inexistente" }; //Es importante controlar que el id existe para evitar un elto undifined
@@ -95,13 +110,16 @@ fastify.get(
     );
 
     fastify.delete(
-    "/usuarios/:id_usuario",
+    "/usuarios/:id_usuario",// pasa lo mismo que en el put *2
     {
         schema: {
         summary: "Eliminar un usuario",
         description: "Esta ruta permite eliminar un usuario",
         tags: ["usuarios"],
-        body: usuarioDeleteSchema,
+        //body: usuarioDeleteSchema,
+        params: Type.Object({
+            id_usuario: Type.Number()
+        }),
         response: {
             204: Usuario,
             404: {
@@ -163,3 +181,7 @@ fastify.get(
     );
 };
 export default usuariosRoutes;
+
+
+//*1 params se usa para identificar un recurso unico y querystring se usa para filtros y busquedas 
+//*2 URL(dice que recurso) y body(dice que hacer con el) Put y Delete usa params para el id en lugar de body ya que el id del recuso a modificar va en el URL (segun REST)
