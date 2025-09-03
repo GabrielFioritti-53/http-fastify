@@ -5,6 +5,7 @@ import {
 } from "@fastify/type-provider-typebox";
 import type { FastifyInstance, FastifySchema } from "fastify";
 import errorSchema from "../../model/sharedmodel";
+import { Usuario } from "../../model/usuariosmodel";
 
 const usuarios: Usuario[] = [
   { id_usuario: 1, nombre: "Jorge", isAdmin: true },
@@ -13,19 +14,6 @@ const usuarios: Usuario[] = [
 ];
 
 let id_actual = usuarios.length + 1;
-
-export const Usuario = Type.Object(
-  {
-    id_usuario: Type.Integer(),
-    nombre: Type.String({ minLength: 2 }),
-    isAdmin: Type.Boolean(),
-  },
-  {
-    title: "Esquema para el Usuario",
-  }
-);
-
-type Usuario = Static<typeof Usuario>;
 
 const usuarioPostSchema = {
   type: "object",
