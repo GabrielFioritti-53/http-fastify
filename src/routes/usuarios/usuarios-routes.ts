@@ -4,8 +4,8 @@ import {
   Type,
 } from "@fastify/type-provider-typebox";
 import type { FastifyInstance, FastifySchema } from "fastify";
-import errorSchema from "../../model/sharedmodel";
-import { Usuario } from "../../model/usuariosmodel";
+import errorSchema from "../../model/sharedmodel.ts";
+import { Usuario } from "../../model/usuariosmodel.ts";
 
 
 export const usuarios: Usuario[] = [

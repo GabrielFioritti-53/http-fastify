@@ -4,13 +4,13 @@ import {
     Type,
 } from "@fastify/type-provider-typebox";
 import type { FastifyInstance, FastifySchema } from "fastify";
-import errorSchema from "../model/sharedmodel";
-import { Usuario } from "../model/usuariosmodel";
-import { usuarios } from "../routes/usuarios/usuarios-routes";
-import { usuarioDeleteSchema } from "../routes/usuarios/usuarios-routes";
-import { usuarioGetSchema } from "../routes/usuarios/usuarios-routes";
-import { usuarioPostSchema } from "../routes/usuarios/usuarios-routes";
-import { usuarioPutSchema } from "../routes/usuarios/usuarios-routes";
+import errorSchema from "../model/sharedmodel.ts";
+import { Usuario } from "../model/usuariosmodel.ts";
+import { usuarios } from "../routes/usuarios/usuarios-routes.ts";
+import { usuarioDeleteSchema } from "../routes/usuarios/usuarios-routes.ts";
+import { usuarioGetSchema } from "../routes/usuarios/usuarios-routes.ts";
+import { usuarioPostSchema } from "../routes/usuarios/usuarios-routes.ts";
+import { usuarioPutSchema } from "../routes/usuarios/usuarios-routes.ts";
 
 let id_actual = usuarios.length + 1;
 
@@ -24,15 +24,18 @@ fastify.get(
         tags: ["listaUsuarios"],
         params: Type.Pick(Usuario, ["id_usuario"]),
         response: {
-            200: Usuario,
+            200: Type.Array(Usuario),
             404: errorSchema,
         },
         },
     },
     async function handler(request, reply) {
-        const query = request.query as { nombre: string };
-        if (query.nombre) return usuarios.filter((u) => u.nombre == query.nombre);
-        return usuarios;
+        const query = request.query as { nombre?: string };
+        let result = usuarios;
+        if (query && query.nombre) {
+            result = usuarios.filter((u) => u.nombre == query.nombre);
+        }
+        reply.code(200).send(result);
     }
     );
 
@@ -52,10 +55,10 @@ fastify.get(
     
     async function handler(request, reply) {
         const { nombre, isAdmin } = request.body as Usuario;
-      const usuario = { nombre, isAdmin, id_usuario: id_actual++ }; //Con una constante como id, unicamente subiendo, nos aseguramos que cada user tenga un id unico
+        const usuario = { nombre, isAdmin, id_usuario: id_actual++ }; //Con una constante como id, unicamente subiendo, nos aseguramos que cada user tenga un id unico
         usuarios.push(usuario);
         reply.code(201);
-        return usuario;
+        return [usuario];
     }
     );
 
