@@ -1,13 +1,8 @@
-import { FastifyPluginAsyncTypebox, Type } from "@fastify/type-provider-typebox";
+import { FastifyPluginAsyncTypebox, Static, Type } from "@fastify/type-provider-typebox";
 import type { FastifyInstance, FastifySchema } from "fastify";
+import errorSchema from "../../model/sharedmodel";
 
-type UsuarioType = {
-  id_usuario: number;
-  nombre: string;
-  isAdmin: boolean;
-};
-
-const usuarios: UsuarioType[] = [
+const usuarios: Usuario[] = [
   { id_usuario: 1, nombre: "Jorge", isAdmin: true },
   { id_usuario: 2, nombre: "Alberto", isAdmin: false },
   { id_usuario: 3, nombre: "Juan", isAdmin: false },
@@ -15,23 +10,20 @@ const usuarios: UsuarioType[] = [
 
 let id_actual = usuarios.length + 1;
 
-const usuarioSchema=Type.Object({
-  id_usuario:Type.Integer(),
-  nombre:Type.String({minLength:2}),
-  isAdmin:Type.Boolean()
-},{
-
-});
-/*const usuarioSchema = {
-  type: "object",
-  properties: {
-    id_usuario: { type: "number", min: 0 },
-    nombre: { type: "string", minLength: 2 },
+export const Usuario = Type.Object(
+  {
+    id_usuario: Type.Integer(),
+    nombre: Type.String({ minLength: 2 }),
+    isAdmin: Type.Boolean(),
   },
-  required: ["id_usuario", "nombre"],
-  additionalProperties: true,
-};
-*/
+  {
+    title: "Esquema para el Usuario",
+  }
+);
+
+type Usuario = Static<typeof Usuario>;
+
+
 const usuarioPostSchema = {
   type: "object",
   properties: {
@@ -67,14 +59,15 @@ const usuarioGetSchema = {
   additionalProperties: false,
 };
 const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {
-  fastify.get('/usuarios/:id_usuario',{
+  fastify.get('/usuarios',{
       schema: {
         summary: "Obtener todos los usuarios",
         description: "Retorna la lista de usuarios",
         tags: ["listaUsuarios"],
-        params:Type.Pick(usuarioSchema,["id_usuario"]),
+        params:Type.Pick(Usuario,["id_usuario"]),
         response: {
-          200:usuarioSchema
+          200:Usuario,
+          404:errorSchema
         },
       },
     },
@@ -92,10 +85,8 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {
         summary: "Crear usuario",
         descrption: "Estas ruta permite crear un nuevo usuario. ",
         tags: ["usuarios"],
-        body: usuarioPostSchema,
-        response: {
-          201: usuarioSchema,
-        },
+        querystring: Type.Object({nobre: Type.Optional(Type.String({minLength:2}))}),
+        response: {201: Type.Array(Usuario)}
       },
     },
     async function handler(request, reply) {
@@ -116,7 +107,7 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {
         tags: ["usuarios"],
         body: usuarioPutSchema,
         response: {
-          204: usuarioSchema,
+          204: Usuario,
           404: {
             type: "object",
             properties: {
@@ -151,7 +142,7 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {
         tags: ["usuarios"],
         body: usuarioDeleteSchema,
         response: {
-          204: usuarioSchema,
+          204: Usuario,
           404: {
             type: "object",
             properties: {
@@ -185,7 +176,7 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {
         tags: ["usuarios"],
         params: usuarioGetSchema,
         response: {
-          200: usuarioSchema,
+          200: Usuario,
           404: {
             type: "object",
             properties: {
