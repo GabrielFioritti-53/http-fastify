@@ -1,11 +1,17 @@
-import Fastify from "fastify";
+import Fastify from "fastify"
 import rootRoutes from "./src/routes/root-modules.ts";
 import exampleRoutes from "./src/routes/example-routes.ts";
 import swagger from "./src/plugins/swagger.ts";
 import usuariosRoutes from "./src/services/service.ts";
-const fastify = Fastify({
-  logger: true,
-});
+import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+import type { FastifyInstance, FastifyListenOptions } from "fastify";
+
+const fastify: FastifyInstance =
+  Fastify().withTypeProvider<TypeBoxTypeProvider>();{
+    logger:true
+  }
+
+
 
 fastify.register(swagger);
 //fastify.register(rootRoutes);

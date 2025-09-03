@@ -1,22 +1,21 @@
-import {
+import type {
     FastifyPluginAsyncTypebox,
-    Static,
-    Type,
 } from "@fastify/type-provider-typebox";
+import {Type} from "@fastify/type-provider-typebox";
 import type { FastifyInstance, FastifySchema } from "fastify";
-import errorSchema from "../model/sharedmodel";
-import { Usuario } from "../model/usuariosmodel";
-import { usuarios } from "../routes/usuarios/usuarios-routes";
+import errorSchema from "../model/sharedmodel.ts";
+import { Usuario } from "../model/usuariosmodel.ts";
+import { usuarios } from "../routes/usuarios/usuarios-routes.ts";
 import {
     usuarioDeleteSchema,
     usuarioGetSchema,
     usuarioPostSchema,
     usuarioPutSchema,
-} from "../routes/usuarios/usuarios-routes";
+} from "../routes/usuarios/usuarios-routes.ts";
 
 let id_actual = usuarios.length + 1;
 
-const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {
+const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify, options: object) {
 fastify.get(
     "/usuarios", //en vez de params ahora usa querystring *1
     {
@@ -35,7 +34,7 @@ fastify.get(
             },
         },
     },
-    //sacamos el handler y async no sa error por el 200:Type.Array(Usuario)
+    //sacamos el handler y async no da error por el 200:Type.Array(Usuario)
     async function (request, reply) {
         const query = request.query as { nombre: string };
         if (query.nombre) {

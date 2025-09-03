@@ -18,6 +18,7 @@ export default rootRoutes;
 */
 
 import Fastify from "fastify";
+import pino from 'pino';
 
 const fastify = Fastify({
   logger: {

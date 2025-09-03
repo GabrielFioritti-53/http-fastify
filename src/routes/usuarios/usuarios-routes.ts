@@ -1,11 +1,9 @@
-import {
-  FastifyPluginAsyncTypebox,
-  Static,
-  Type,
+import type {
+  FastifyPluginAsyncTypebox
 } from "@fastify/type-provider-typebox";
 import type { FastifyInstance, FastifySchema } from "fastify";
 import errorSchema from "../../model/sharedmodel.ts";
-import { Usuario } from "../../model/usuariosmodel";
+import { Usuario } from "../../model/usuariosmodel.ts";
 
 
 export const usuarios: Usuario[] = [
