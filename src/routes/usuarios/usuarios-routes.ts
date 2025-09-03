@@ -1,6 +1,11 @@
-import { FastifyPluginAsyncTypebox, Static, Type } from "@fastify/type-provider-typebox";
+import {
+  FastifyPluginAsyncTypebox,
+  Static,
+  Type,
+} from "@fastify/type-provider-typebox";
 import type { FastifyInstance, FastifySchema } from "fastify";
 import errorSchema from "../../model/sharedmodel";
+import { Usuario } from "../../model/usuariosmodel";
 
 const usuarios: Usuario[] = [
   { id_usuario: 1, nombre: "Jorge", isAdmin: true },
@@ -9,20 +14,6 @@ const usuarios: Usuario[] = [
 ];
 
 let id_actual = usuarios.length + 1;
-
-export const Usuario = Type.Object(
-  {
-    id_usuario: Type.Integer(),
-    nombre: Type.String({ minLength: 2 }),
-    isAdmin: Type.Boolean(),
-  },
-  {
-    title: "Esquema para el Usuario",
-  }
-);
-
-type Usuario = Static<typeof Usuario>;
-
 
 const usuarioPostSchema = {
   type: "object",
@@ -59,15 +50,17 @@ const usuarioGetSchema = {
   additionalProperties: false,
 };
 const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {
-  fastify.get('/usuarios',{
+  fastify.get(
+    "/usuarios",
+    {
       schema: {
         summary: "Obtener todos los usuarios",
         description: "Retorna la lista de usuarios",
         tags: ["listaUsuarios"],
-        params:Type.Pick(Usuario,["id_usuario"]),
+        params: Type.Pick(Usuario, ["id_usuario"]),
         response: {
-          200:Usuario,
-          404:errorSchema
+          200: Usuario,
+          404: errorSchema,
         },
       },
     },
@@ -85,8 +78,10 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {
         summary: "Crear usuario",
         descrption: "Estas ruta permite crear un nuevo usuario. ",
         tags: ["usuarios"],
-        querystring: Type.Object({nobre: Type.Optional(Type.String({minLength:2}))}),
-        response: {201: Type.Array(Usuario)}
+        querystring: Type.Object({
+          nobre: Type.Optional(Type.String({ minLength: 2 })),
+        }),
+        response: { 201: Type.Array(Usuario) },
       },
     },
     async function handler(request, reply) {
@@ -200,5 +195,5 @@ const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {
       return usuarios[usuarioId];
     }
   );
-}
+};
 export default usuariosRoutes;
