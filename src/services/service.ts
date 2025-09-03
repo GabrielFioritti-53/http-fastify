@@ -7,11 +7,12 @@ import type { FastifyInstance, FastifySchema } from "fastify";
 import errorSchema from "../model/sharedmodel";
 import { Usuario } from "../model/usuariosmodel";
 import { usuarios } from "../routes/usuarios/usuarios-routes";
-import { usuarioDeleteSchema } from "../routes/usuarios/usuarios-routes";
-import { usuarioGetSchema } from "../routes/usuarios/usuarios-routes";
-import { usuarioPostSchema } from "../routes/usuarios/usuarios-routes";
-import { usuarioPutSchema } from "../routes/usuarios/usuarios-routes";
-
+import {
+    usuarioDeleteSchema,
+    usuarioGetSchema,
+    usuarioPostSchema,
+    usuarioPutSchema,
+} from "../routes/usuarios/usuarios-routes";
 let id_actual = usuarios.length + 1;
 
 const usuariosRoutes: FastifyPluginAsyncTypebox = async function (fastify) {

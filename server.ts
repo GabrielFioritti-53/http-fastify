@@ -8,7 +8,7 @@ const fastify = Fastify({
 });
 
 fastify.register(swagger);
-fastify.register(rootRoutes);
+//fastify.register(rootRoutes);
 fastify.register(exampleRoutes);
 fastify.register(usuariosRoutes);
 
