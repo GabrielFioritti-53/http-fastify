@@ -6,6 +6,7 @@ import type { FastifyInstance, FastifySchema } from "fastify";
 import errorSchema from "../model/sharedmodel.ts";
 import { Usuario } from "../model/usuariosmodel.ts";
 import { usuarios } from "../routes/usuarios/usuarios-routes.ts";
+
 import {
     usuarioDeleteSchema,
     usuarioGetSchema,
@@ -70,7 +71,6 @@ fastify.get(
         return usuario;
     }
     );
-
     fastify.put(
     "/usuarios/:id_usuario",//tenia body y le cambie a params *2
     {
