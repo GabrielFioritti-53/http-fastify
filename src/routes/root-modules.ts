@@ -32,7 +32,6 @@ const fastify = Fastify({
     }
   }
 });
-
 // Ejemplo de endpoint
 fastify.get("/", async () => {
   fastify.log.info("Este es un log bonito");
