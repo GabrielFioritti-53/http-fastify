@@ -13,6 +13,7 @@ import fp from 'fastify-plugin'
 
 //En vez de exportar la función la encapsulamos con fastify plugin.
 export default fp<FastifySwaggerOptions>(async (fastify) => {
+  console.log("Swagger plugin registered");
   await fastify.register(swagger,{
     openapi: {
       openapi: '3.0.0',
