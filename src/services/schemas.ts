@@ -1,6 +1,6 @@
+//schema de usuarios
 import { Usuario } from "../model/usuariosmodel.ts";
 import { Type } from "@sinclair/typebox";
-import type { Static } from "@sinclair/typebox";
 
 export const usuarios: Usuario[] = [
   { id_usuario: 1, nombre: "Jorge", isAdmin: true },
