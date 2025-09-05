@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "dev": "node --watch --env-file=.env server.ts",
-    "plugins": "npm install fastify@latest @fastify/sensible @fastify/swagger @fastify/swagger-ui @fastify/type-provider-typebox pino@latest pino-pretty@latest @types/node --save-dev"
+    "plugins": "npm install fastify@latest @fastify/sensible @fastify/swagger @fastify/swagger-ui @fastify/jwt @fastify/type-provider-typebox pino@latest pino-pretty@latest @types/node --save-dev"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@fastify/jwt": "^10.0.0",
     "@fastify/sensible": "^6.0.3",
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",
