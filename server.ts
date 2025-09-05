@@ -5,7 +5,7 @@ import usuariosRoutes from "./src/routes/usuarios/usuarios-routes.ts";
 
 const loggerOptions = {
   level: process.env.FASTIFY_LOG_LEVEL || "trace",
-  transport: {
+  transport: {  
     target: "pino-pretty",
     options: {
       translateTime: "HH:MM:ss",
