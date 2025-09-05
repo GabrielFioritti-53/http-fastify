@@ -51,10 +51,10 @@ export const usuariosRoutes: FastifyPluginAsyncTypebox = async function (
         summary: "Crear usuario",
         descrption: "Estas ruta permite crear un nuevo usuario. ",
         tags: ["usuarios"],
-        //        querystring: Type.Object({
-        //    nobre: Type.Optional(Type.String({ minLength: 2 })),
-        //}),
-        body: usuarioPostSchema, //Teniamos cambiado la sintaxis con la del get
+        querystring: Type.Object({
+          nombre: Type.Optional(Type.String({ minLength: 2 })),
+        }),
+        body: usuarioPostSchema,
         response: {
           201: Usuario,
           400: ErrorValidacion,
