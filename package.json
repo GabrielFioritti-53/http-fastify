@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch --env-file .env server.ts"
+    "dev": "node --watch --env-file .env server.ts",
+    "plugins": "npm install fastify@latest @fastify/sensible @fastify/swagger @fastify/swagger-ui @fastify/type-provider-typebox pino@latest pino-pretty@latest @types/node --save-dev"
   },
   "keywords": [],
   "author": "",
