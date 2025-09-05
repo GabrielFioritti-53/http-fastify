@@ -10,8 +10,8 @@ export const usuarios: Usuario[] = [
 export const usuarioPostSchema = {
   type: "object",
   properties: {
-    nombre: { type: "string", minLength: 2 },
-    isAdmin: { type: "boolean" },
+    nombre: Type.String({ minLength: 2 }),
+    isAdmin: Type.Boolean(),
   },
   required: ["nombre", "isAdmin"],
   additionalProperties: false,
@@ -21,7 +21,7 @@ export const usuarioPostSchema = {
 export const usuarioPutSchema = {
   type: "object",
   properties: {
-    nombre: { type: "string", minLength: 2 },
+    nombre: Type.String({ minLength: 2 }),
   },
   required: ["nombre"],
   additionalProperties: false,
@@ -30,7 +30,7 @@ export const usuarioPutSchema = {
 export const usuarioParamsSchema = {
   type: "object",
   properties: {
-    id_usuario: { type: "number" },
+    id_usuario: Type.Number(),
   },
   required: ["id_usuario"],
 };
@@ -38,7 +38,7 @@ export const usuarioParamsSchema = {
 export const usuarioDeleteSchema = {
   type: "object",
   properties: {
-    id_usuario: { type: "number" },
+    id_usuario: Type.Number(),
   },
   required: ["id_usuario"],
   additionalProperties: false,
@@ -46,7 +46,7 @@ export const usuarioDeleteSchema = {
 export const usuarioGetSchema = {
   type: "object",
   properties: {
-    id_usuario: { type: "number" },
+    id_usuario: Type.Number(),
   },
   required: ["id_usuario"],
   additionalProperties: false,

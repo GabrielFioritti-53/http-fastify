@@ -2,10 +2,11 @@ import Fastify from "fastify";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import swagger from "./src/plugins/swagger.ts";
 import usuariosRoutes from "./src/routes/usuarios/usuarios-routes.ts";
+import { auth } from "./src/routes/auth/auth.ts";
 
 const loggerOptions = {
   level: process.env.FASTIFY_LOG_LEVEL || "trace",
-  transport: {  
+  transport: {
     target: "pino-pretty",
     options: {
       translateTime: "HH:MM:ss",
@@ -20,6 +21,7 @@ const fastify = Fastify({
 
 await fastify.register(swagger);
 await fastify.register(usuariosRoutes);
+await fastify.register(auth);
 
 try {
   await fastify.listen({ host: "::", port: 3000 });

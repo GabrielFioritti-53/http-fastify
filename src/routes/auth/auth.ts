@@ -1,6 +1,13 @@
-import { FastifyPluginAsync } from "fastify";
 import { loginSchema } from "../../services/schemas.ts";
-const auth: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+import {
+  Type,
+  type FastifyPluginAsyncTypebox,
+} from "@fastify/type-provider-typebox";
+
+export const auth: FastifyPluginAsyncTypebox = async (
+  fastify,
+  opts
+): Promise<void> => {
   fastify.post(
     "/login",
     {
@@ -10,7 +17,7 @@ const auth: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         tags: ["Logger"],
         body: loginSchema,
         response: {
-          200: fastify.log.info("Usuario logueado con exito"),
+          200: Type.String(),
           401: {
             type: "object",
             properties: {
@@ -22,7 +29,10 @@ const auth: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       },
     },
     async (request, reply) => {
-      const { usuario } = request.body as typeof loginSchema; //Si da error intentamos con any en vez de loginSchema
+      const { usuario, contrasena } = request.body as {
+        usuario: string;
+        contrasena: string;
+      }; //Si da error intentamos con any en vez de loginSchema
       const token = Buffer.from(JSON.stringify(usuario)).toString("base64");
       return { token };
     }
