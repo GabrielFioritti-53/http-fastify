@@ -18,6 +18,16 @@ declare module "fastify" {
     }
 }
 
+/* 
+async (request, reply) => {
+    const payload : Usuario = { 
+    id: 1,
+    nombre: "Franco",
+    isAdmin: true,
+    }
 
+    const 
+
+*/
 
     
