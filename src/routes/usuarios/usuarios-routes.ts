@@ -8,7 +8,7 @@ import {
   usuarioPutSchema,
 } from "../../services/schemas.ts";
 import errorSchema from "../../model/sharedmodel.ts";
-import { NoEncontradoError} from "../../util/errorManager.ts";
+import { NoEncontradoError, ErrorValidacion} from "../../util/errorManager.ts";
 
 let id_actual = usuarios.length + 1;
 
@@ -30,7 +30,7 @@ export const usuariosRoutes: FastifyPluginAsyncTypebox = async function (
         response: {
           //200: Usuario,
           200: Type.Array(Usuario),
-          404: errorSchema,
+          404: NoEncontradoError,
         },
       },
     },
@@ -57,7 +57,7 @@ export const usuariosRoutes: FastifyPluginAsyncTypebox = async function (
         body: usuarioPostSchema, //Teniamos cambiado la sintaxis con la del get
         response: {
           201: Usuario,
-          400: errorSchema,
+          400: ErrorValidacion,
         },
       },
     },
@@ -83,22 +83,17 @@ export const usuariosRoutes: FastifyPluginAsyncTypebox = async function (
         }),
         response: {
           204: Usuario,
-          404: {
-            type: "object",
-            properties: {
-              error: { type: "string" },
-            },
+          404: NoEncontradoError,
           },
         },
       },
-    },
     async function (request, reply) {
       const { id_usuario } = request.params as { id_usuario: number };
       const { nombre } = request.body as { nombre: string };
       const usuarioId = usuarios.findIndex((u) => u.id_usuario === id_usuario); //Es importante buscar los user por su id pues es el unico elto que es unico por user.
       if (usuarioId === -1) {
         reply.code(404);
-        return { error: "Usuario inexistente" }; //Es importante controlar que el id existe para evitar un elto undifined
+        return NoEncontradoError;
       } else {
         usuarios[usuarioId].nombre = nombre;
         reply.code(204);
@@ -119,21 +114,16 @@ export const usuariosRoutes: FastifyPluginAsyncTypebox = async function (
         }),
         response: {
           204: Usuario,
-          404: {
-            type: "object",
-            properties: {
-              error: { type: "string" },
-            },
+          404: NoEncontradoError
           },
         },
       },
-    },
     async function handler(request, reply) {
       const { id_usuario } = request.params as { id_usuario: number };
       const usuarioId = usuarios.findIndex((u) => u.id_usuario === id_usuario);
       if (usuarioId === -1) {
         reply.code(404);
-        return { error: "Usuario inexistente" };
+        return NoEncontradoError;
       } else {
         usuarios.splice(usuarioId, 1);
         reply.code(204);
@@ -151,12 +141,7 @@ export const usuariosRoutes: FastifyPluginAsyncTypebox = async function (
         params: usuarioGetSchema,
         response: {
           200: Usuario,
-          404: {
-            type: "object",
-            properties: {
-              error: { type: "string" },
-            },
-          },
+          404: NoEncontradoError,
         },
       },
     },
@@ -168,7 +153,7 @@ export const usuariosRoutes: FastifyPluginAsyncTypebox = async function (
       const usuarioId = usuarios.findIndex((u) => u.id_usuario === idNumber);
       if (usuarioId === -1) {
         reply.code(404);
-        return { error: "Usuario inexistente" };
+        return NoEncontradoError;
       }
       reply.code(200);
       return usuarios[usuarioId];
