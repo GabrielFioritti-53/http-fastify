@@ -1,16 +1,25 @@
 import Fastify from "fastify";
-import rootRoutes from "./src/routes/root-modules.ts";
-import exampleRoutes from "./src/routes/example-routes.ts";
+import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import swagger from "./src/plugins/swagger.ts";
 import usuariosRoutes from "./src/routes/usuarios/usuarios-routes.ts";
-const fastify = Fastify({
-  logger: true,
-});
 
-fastify.register(swagger);
-fastify.register(rootRoutes);
-fastify.register(exampleRoutes);
-fastify.register(usuariosRoutes);
+const loggerOptions = {
+  level: process.env.FASTIFY_LOG_LEVEL || "trace",
+  transport: {
+    target: "pino-pretty",
+    options: {
+      translateTime: "HH:MM:ss",
+      ignore: "pid,hostname",
+    },
+  },
+};
+
+const fastify = Fastify({
+  logger: loggerOptions,
+}).withTypeProvider<TypeBoxTypeProvider>();
+
+await fastify.register(swagger);
+await fastify.register(usuariosRoutes);
 
 try {
   await fastify.listen({ host: "::", port: 3000 });
